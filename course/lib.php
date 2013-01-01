@@ -1517,18 +1517,28 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if ($url = $mod->get_url()) {
                     // Display link itself
 
+                    //First, let's see if we are seeing a new modle
                     if(isset($mod->added)){
-                        if(time()-$mod->added < $CFG->newicontime){
-                            $imgsrc = "img/new.gif";
+                        if(!isset($CFG->newicontime)){          //If the newicontime is not configured
+                            if(time() - $mod->added < 48*3600)  //We set the standard time to 2 days
+                                $imgsrc = "img/new.gif";
+                            else
+                                $imgsrc = $mod->get_icon_url();
                         }
                         else{
-                            $imgsrc = $mod->get_icon_url();
+                            if(time()-$mod->added < $CFG->newicontime){
+                                $imgsrc = "img/new.gif";
+                            }
+                            else{
+                                $imgsrc = $mod->get_icon_url();
+                            }
                         }
                     }
                     else{
                         $imgsrc = $mod->get_icon_url();
                     }
                     
+                    //Now we can plot the icon:
                     echo '<a ' . $linkcss . $mod->extra . $onclick .
                             ' href="' . $url . '"><img src="' . $imgsrc .
                             '" class="iconlarge activityicon" alt="' . $mod->modfullname . '" />' .
