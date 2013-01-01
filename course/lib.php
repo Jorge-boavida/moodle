@@ -1097,7 +1097,6 @@ function get_array_of_activities($courseid) {
                     // Oh dear. Inconsistent names left here for backward compatibility.
                    $mod[$seq]->section          = $section->section;
                    $mod[$seq]->sectionid        = $rawmods[$seq]->section;
-
                    $mod[$seq]->module           = $rawmods[$seq]->module;
                    $mod[$seq]->added            = $rawmods[$seq]->added;
                    $mod[$seq]->score            = $rawmods[$seq]->score;
@@ -1393,7 +1392,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         echo "<ul class=\"section img-text\">\n";
 
         foreach ($modinfo->sections[$section->section] as $modnumber) {
-            $mod = $modinfo->cms[$modnumber];
+            $mod = $modinfo->get_cm($modnumber);
 
             if ($ismoving and $mod->id == $USER->activitycopy) {
                 // do not display moving mod
@@ -1517,8 +1516,21 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                 if ($url = $mod->get_url()) {
                     // Display link itself
+
+                    if(isset($mod->added)){
+                        if(time()-$mod->added < $CFG->newicontime){
+                            $imgsrc = "img/new.gif";
+                        }
+                        else{
+                            $imgsrc = $mod->get_icon_url();
+                        }
+                    }
+                    else{
+                        $imgsrc = $mod->get_icon_url();
+                    }
+                    
                     echo '<a ' . $linkcss . $mod->extra . $onclick .
-                            ' href="' . $url . '"><img src="' . $mod->get_icon_url() .
+                            ' href="' . $url . '"><img src="' . $imgsrc .
                             '" class="iconlarge activityicon" alt="' . $mod->modfullname . '" />' .
                             $accesstext . '<span class="instancename">' .
                             $instancename . $altname . '</span></a>';
