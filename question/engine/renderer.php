@@ -322,11 +322,26 @@ class core_question_renderer extends plugin_renderer_base {
     protected function formulation(question_attempt $qa, qbehaviour_renderer $behaviouroutput,
             qtype_renderer $qtoutput, question_display_options $options) {
         $output = '';
+
+        $output .= "<script>
+                    function clear_answers(name){
+                        var elements = document.getElementsByName(name + \"answer\");
+                        for(var i=0; i<elements.length; ++i){
+                            elements[i].value = \" \";
+                            elements[i].checked = false;
+                        }
+                    }
+                    </script>";
+
         $output .= html_writer::empty_tag('input', array(
                 'type' => 'hidden',
                 'name' => $qa->get_control_field_name('sequencecheck'),
                 'value' => $qa->get_num_steps()));
         $output .= $qtoutput->formulation_and_controls($qa, $options);
+
+        $output .= "<button type=\"button\" onclick=\"clear_answers('";
+        $output .= $qa->get_field_prefix();
+        $output .= "')\">Clear</button>";
         if ($options->clearwrong) {
             $output .= $qtoutput->clear_wrong($qa);
         }
