@@ -323,6 +323,7 @@ class core_question_renderer extends plugin_renderer_base {
             qtype_renderer $qtoutput, question_display_options $options) {
         $output = '';
 
+        //This script clears the answers
         $output .= "<script>
                     function clear_answers(name){
                         var elements = document.getElementsByName(name + \"answer\");
@@ -339,9 +340,11 @@ class core_question_renderer extends plugin_renderer_base {
                 'value' => $qa->get_num_steps()));
         $output .= $qtoutput->formulation_and_controls($qa, $options);
 
+        //This button allows to clean the answers
         $output .= "<button type=\"button\" onclick=\"clear_answers('";
         $output .= $qa->get_field_prefix();
         $output .= "')\">Clear</button>";
+
         if ($options->clearwrong) {
             $output .= $qtoutput->clear_wrong($qa);
         }
